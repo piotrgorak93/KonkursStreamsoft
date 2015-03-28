@@ -9,23 +9,21 @@ import org.w3c.dom.NodeList;
  */
 public class DataParser {
     private Document downloadedData;
+    private NodeList nList;
 
     public DataParser(Document downloadedData) {
         this.downloadedData = downloadedData;
+        this.nList = downloadedData.getElementsByTagName("pozycja");
     }
+
 
     public void parseData() {
         getTableName();
         getDate();
-        System.out.println();
-        getCurrency();
-        getConversion();
-        getCurrencyCode();
-        getAverageExchangeRate();
-
+        getTheValues();
     }
 
-    public String getData(String label, String elementToGet) {
+    public String getHeader(String label, String elementToGet) {
         String dataToReturn = null;
         NodeList header = downloadedData.getElementsByTagName("tabela_kursow");
         for (int temp = 0; temp < header.getLength(); temp++) {
@@ -40,45 +38,49 @@ public class DataParser {
     }
 
     public String getTableName() {
-        return getData("Tabela :", "numer_tabeli");
+        return getHeader("Tabela :", "numer_tabeli");
     }
 
     public String getDate() {
-        return getData("Data publikacji", "data_publikacji");
+        return getHeader("Data publikacji", "data_publikacji");
     }
 
-    public String getValue(String label, String elementToGet) {
+
+    public String getValue(String label, String elementToGet, int i) {
         String dataToReturn = null;
-        NodeList nList = downloadedData.getElementsByTagName("pozycja");
 
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-
-            Node nNode = nList.item(temp);
-
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                Element eElement = (Element) nNode;
-                dataToReturn = eElement.getElementsByTagName(elementToGet).item(0).getTextContent();
-                System.out.println(label + " : " + dataToReturn);
-            }
+        Node nNode = nList.item(i);
+        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element eElement = (Element) nNode;
+            dataToReturn = eElement.getElementsByTagName(elementToGet).item(0).getTextContent();
+            System.out.println(label + " : " + dataToReturn);
         }
         return dataToReturn;
     }
 
-    public String getCurrency() {
-        return getValue("Waluta", "nazwa_waluty");
+    public String getCurrency(int i) {
+        return getValue("Waluta", "nazwa_waluty", i);
     }
 
-    public String getConversion() {
-        return getValue("Przelicznik", "przelicznik");
+    public String getConversion(int i) {
+        return getValue("Przelicznik", "przelicznik", i);
     }
 
-    public String getCurrencyCode() {
-        return getValue("Kod waluty", "kod_waluty");
+    public String getCurrencyCode(int i) {
+        return getValue("Kod waluty", "kod_waluty", i);
     }
 
-    public String getAverageExchangeRate() {
-        return getValue("Kurs średni", "kurs_sredni");
+    public String getAverageExchangeRate(int i) {
+        return getValue("Kurs średni", "kurs_sredni", i);
+    }
+    public void getTheValues(){
+        System.out.println();
+        for (int i = 0; i < nList.getLength(); i++) {
+            getCurrency(i);
+            getConversion(i);
+            getCurrencyCode(i);
+            getAverageExchangeRate(i);
+            System.out.println();
+        }
     }
 }
-
