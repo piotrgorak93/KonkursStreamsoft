@@ -9,8 +9,9 @@ public class Controller {
         Document tabelaB = new DataDownloader().downloadData("http://www.nbp.pl/kursy/xml/b012z150325.xml");
         Document tabelaC = new DataDownloader().downloadData("http://www.nbp.pl/kursy/xml/c060z150327.xml");
 
-        new DataParser(tabelaA).parseData();
-        new DataParser(tabelaB).parseData();
+        new DataParser(tabelaA).parseData(false);
+        new DataParser(tabelaB).parseData(false);
+        new DataParser(tabelaC).parseData(true);
 
     }
 }

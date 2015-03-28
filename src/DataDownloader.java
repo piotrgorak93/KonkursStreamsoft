@@ -7,6 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * @author Piotr Górak dnia 2015-03-28.
@@ -31,8 +32,12 @@ public class DataDownloader {
             doc = db.parse(url.openStream());
         } catch (SAXException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (UnknownHostException e) {
+            System.err.println("Brak polaczenia");
+            System.exit(0);
+        }catch (IOException e){
             e.printStackTrace();
+            System.exit(0);
         }
         return doc;
     }

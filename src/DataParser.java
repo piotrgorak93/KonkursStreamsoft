@@ -17,10 +17,13 @@ public class DataParser {
     }
 
 
-    public void parseData() {
+    public void parseData(Boolean isTabelaC) {
         getTableName();
+        if (isTabelaC) {
+            getRatingDate();
+        }
         getDate();
-        getTheValues();
+        getTheValues(isTabelaC);
     }
 
     public String getHeader(String label, String elementToGet) {
@@ -43,6 +46,10 @@ public class DataParser {
 
     public String getDate() {
         return getHeader("Data publikacji", "data_publikacji");
+    }
+
+    public String getRatingDate() {
+        return getHeader("Data notowania", "data_notowania");
     }
 
 
@@ -73,13 +80,26 @@ public class DataParser {
     public String getAverageExchangeRate(int i) {
         return getValue("Kurs średni", "kurs_sredni", i);
     }
-    public void getTheValues(){
+
+    public String getPurchaseRate(int i) {
+        return getValue("Kurs kupna", "kurs_kupna", i);
+    }
+
+    public String getSellRate(int i) {
+        return getValue("Kurs sprzedaży", "kurs_sprzedazy", i);
+    }
+
+    public void getTheValues(Boolean isTabelaC) {
         System.out.println();
         for (int i = 0; i < nList.getLength(); i++) {
             getCurrency(i);
             getConversion(i);
             getCurrencyCode(i);
-            getAverageExchangeRate(i);
+            if (isTabelaC) {
+                getPurchaseRate(i);
+                getSellRate(i);
+            } else
+                getAverageExchangeRate(i);
             System.out.println();
         }
     }
