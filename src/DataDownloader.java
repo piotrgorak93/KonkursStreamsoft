@@ -1,40 +1,57 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author Piotr Górak dnia 2015-03-28.
  */
 public class DataDownloader {
-    public String downloadData(String p_sURL)
-    {
-        URL oURL;
-        URLConnection oConnection;
-        BufferedReader oReader;
-        String sLine;
-        StringBuilder sbResponse;
-        String sResponse = null;
+    public Document downloadData(String urlToParse) {
+        URL url = null;
+        Document doc = null;
+        url = connectToURL(urlToParse, url);
 
-        try
-        {
-            oURL = new URL(p_sURL);
-            oConnection = oURL.openConnection();
-            oReader = new BufferedReader(new InputStreamReader(oConnection.getInputStream()));
-            sbResponse = new StringBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = null;
 
-            while((sLine = oReader.readLine()) != null)
-            {
-                sbResponse.append(sLine);
-            }
+        db = createDocument(dbf, db);
+        doc = retrieveDocument(url, doc, db);
 
-            sResponse = sbResponse.toString();
-        }
-        catch(Exception e)
-        {
+        return doc;
+    }
+
+    private Document retrieveDocument(URL url, Document doc, DocumentBuilder db) {
+        try {
+            doc = db.parse(url.openStream());
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return doc;
+    }
 
-        return sResponse;
+    private DocumentBuilder createDocument(DocumentBuilderFactory dbf, DocumentBuilder db) {
+        try {
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+        return db;
+    }
+
+    private URL connectToURL(String urlToParse, URL url) {
+        try {
+            url = new URL(urlToParse);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
 }
